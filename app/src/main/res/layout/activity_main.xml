@@ -306,6 +306,7 @@
 
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
+
                 >
 
             </android.widget.Button>
@@ -331,6 +332,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
+
                 >
 
             </android.widget.Button>
@@ -355,6 +357,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
+
                 >
 
             </android.widget.Button>
@@ -524,7 +527,6 @@
                 android:text="÷"
                 android:textSize="45dp"
                 android:textColor="@color/white"
-                android:gravity="center"
 
                 > </android.widget.Button>
 
