@@ -14,4 +14,10 @@ class Calculator_Controller : ICalculator_Controller {
 
     }
 
+    override fun OperatinosButtonCLickEvent(main_view: TextView, secondary_view: TextView, main_button: Button) {
+
+        calcullator_model.OperatinosButtonCLickEvent(main_view,secondary_view,main_button)
+
+    }
+
 }

@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var EQUAL : Button
     lateinit var DOT : Button
     lateinit var CLEAN : Button
-    lateinit var REMOVE : ImageButton
+    lateinit var REMOVE : Button
 
         // Numbers
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 //     Variables
 
     lateinit var NumbersList : List<Button>
-    lateinit var MainButtonsList : List<Any>
+    lateinit var OperationsButtonList : List<Button>
     lateinit var Calcualtor_Controller : Calculator_Controller
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             EQUAL = findViewById<Button>(R.id.EQUAL)
             DOT = findViewById<Button>(R.id.DOT)
             CLEAN = findViewById<Button>(R.id.CLEAN)
-            REMOVE = findViewById<ImageButton>(R.id.REMOVE)
+            REMOVE = findViewById<Button>(R.id.REMOVE)
 
             BTN_9 = findViewById<Button>(R.id.BTN_9)
             BTN_8 = findViewById<Button>(R.id.BTN_8)
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
 
             NumbersList = listOf<Button>(BTN_9,BTN_8,BTN_7,BTN_6,BTN_5,BTN_4,BTN_3,BTN_2,BTN_1,BTN_0)
-            MainButtonsList = listOf<Any>(PLUS,MINUS,MULTIPLICATION,DIVISION,EQUAL,DOT,CLEAN,REMOVE)
+            OperationsButtonList = listOf<Button>(PLUS,MINUS,MULTIPLICATION,DIVISION)
             Calcualtor_Controller = Calculator_Controller()
 
     }
@@ -91,6 +91,14 @@ class MainActivity : AppCompatActivity() {
                 Calcualtor_Controller.NumberClickEvent(button,MainView,SecondaryView)
 
             }}
+
+     // Operations Button Click event
+
+            OperationsButtonList.forEach{ button -> button.setOnClickListener {
+
+                Calcualtor_Controller.OperatinosButtonCLickEvent(MainView,SecondaryView,button)
+
+            }  }
 
     }
 

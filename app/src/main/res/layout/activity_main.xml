@@ -21,47 +21,111 @@
        android:layout_height="@dimen/cardview_default_elevation"
 
        android:orientation="vertical"
+       android:weightSum="3"
         android:layout_weight="1"
        android:layout_margin="5dp"
 
+       android:gravity="right"
 
        >
 
-        <TextView
-
-            android:id="@+id/Main_View"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:text="02"
-            android:textSize="35dp"
-            android:textColor="@color/Orange"
-            android:gravity="right"
-
-            android:layout_marginTop="15dp"
-
-            >
-
-        </TextView>
-
-       <TextView
-
-           android:id="@+id/Secondary_View"
-
-
+       <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
 
-           android:text="02"
-           android:textSize="25dp"
-           android:textColor="@color/white"
-            android:gravity="right"
+           android:weightSum="2"
+           android:orientation="vertical"
 
+           android:layout_weight="1.5"
            >
 
-       </TextView>
+           <TextView
 
+               android:id="@+id/Main_View"
+
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_weight="0"
+
+               android:text="0"
+               android:textSize="35dp"
+               android:textColor="@color/Orange"
+               android:gravity="right"
+               android:maxLines="1"
+
+               android:layout_marginTop="15dp"
+
+               >
+
+           </TextView>
+
+           <TextView
+
+               android:id="@+id/Secondary_View"
+
+
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_weight="2"
+
+               android:text="0"
+               android:textSize="25dp"
+               android:textColor="@color/white"
+               android:gravity="right"
+
+               >
+
+           </TextView>
+
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+
+           android:weightSum="2"
+           android:orientation="horizontal"
+           android:gravity="bottom"
+           android:layout_weight="1.5"
+
+           android:layout_marginRight="20dp"
+            >
+
+           <android.widget.Button
+
+               android:id="@+id/CLEAN"
+
+               android:layout_width="70dp"
+               android:layout_height="70dp"
+
+               android:background="@drawable/circle_layout"
+
+               android:text="C"
+               android:textSize="35dp"
+               android:textColor="@color/white"
+
+               android:layout_margin="5dp"
+
+               > </android.widget.Button>
+
+           <android.widget.Button
+
+               android:id="@+id/REMOVE"
+
+               android:layout_width="70dp"
+               android:layout_height="70dp"
+
+               android:background="@drawable/circle_layout"
+
+               android:text="⌦"
+               android:textSize="35dp"
+               android:textColor="@color/white"
+
+               android:layout_margin="5dp"
+
+               > </android.widget.Button>
+
+       </LinearLayout>
    </LinearLayout>
 
     <LinearLayout
@@ -328,54 +392,44 @@
 
                 android:layout_weight="0.5"
 
+                android:weightSum="2"
+                android:orientation="horizontal"
+
                 android:layout_marginBottom="30dp"
+                android:gravity="center"
 
                 >
-                <android.widget.Button
+               <android.widget.Button
 
-                    android:id="@+id/CLEAN"
+                   android:id="@+id/CONVERTER"
 
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                   android:layout_width="80dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
 
-                    android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                   android:background="@drawable/round_layout"
+                   android:backgroundTint="@color/Orange"
 
 
-                    android:layout_margin="5dp"
+                   android:layout_margin="5dp"
 
-                    android:text="C"
-                    android:textSize="45dp"
-                    android:textColor="@color/white"
-                    android:gravity="center"
+                   android:text="+/-"
+                   android:textSize="45dp"
+                   android:textColor="@color/white"
+                   android:gravity="center"
+                   >
 
-                    > </android.widget.Button>
-                <ImageButton
-
-                    android:id="@+id/REMOVE"
-
-                    android:layout_width="80dp"
-                    android:layout_height="60dp"
-
-                    android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
-
-                    android:src="@android:drawable/ic_input_delete"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerInside"
-
-                    android:layout_margin="5dp"
-
-                    > </ImageButton>
+               </android.widget.Button>
                 <android.widget.Button
 
                     android:id="@+id/DOT"
 
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
                     android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                    android:backgroundTint="@color/Orange"
 
 
                     android:layout_margin="5dp"
@@ -426,7 +480,7 @@
                 android:layout_height="wrap_content"
 
                 android:background="@drawable/round_layout"
-                android:backgroundTint="@color/Black"
+                android:backgroundTint="@color/Orange"
 
 
                 android:layout_margin="5dp"
@@ -458,7 +512,7 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                    android:backgroundTint="@color/Orange"
 
 
                     android:layout_margin="5dp"
@@ -489,7 +543,7 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                    android:backgroundTint="@color/Orange"
 
 
                     android:layout_margin="5dp"
@@ -520,7 +574,7 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                    android:backgroundTint="@color/Orange"
 
 
                     android:layout_margin="5dp"
@@ -552,14 +606,14 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_layout"
-                    android:backgroundTint="@color/Black"
+                    android:backgroundTint="@color/white"
 
 
                     android:layout_margin="5dp"
 
                     android:text="="
                     android:textSize="45dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/Black"
                     android:gravity="center"
 
                     > </android.widget.Button>

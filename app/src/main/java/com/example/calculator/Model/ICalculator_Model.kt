@@ -9,4 +9,8 @@ interface ICalculator_Model {
                           main_view : TextView ,
                           secondary_view : TextView)
 
+    fun OperatinosButtonCLickEvent (main_view : TextView,
+                                    secondary_view : TextView,
+                                    main_button : Button)
+
 }
