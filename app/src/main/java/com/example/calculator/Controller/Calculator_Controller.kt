@@ -16,7 +16,43 @@ class Calculator_Controller : ICalculator_Controller {
 
     override fun OperatinosButtonCLickEvent(main_view: TextView, secondary_view: TextView, main_button: Button) {
 
-        calcullator_model.OperatinosButtonCLickEvent(main_view,secondary_view,main_button)
+       if (!main_view.text.isNullOrEmpty()) { calcullator_model.OperatinosButtonCLickEvent(main_view, secondary_view, main_button) }
+
+    }
+
+    override fun CleanClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        calcullator_model.CleanClickEvent(main_view,secondary_view)
+
+    }
+
+    override fun DotClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        if (!main_view.text.isNullOrEmpty()){
+
+            calcullator_model.DotClickEvent(main_view,secondary_view)
+
+        }
+
+    }
+
+    override fun NumberConverterClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        if (!main_view.text.isNullOrEmpty()){
+
+            calcullator_model.NumberConverterClickEvent(main_view,secondary_view)
+
+        }
+
+    }
+
+    override fun RemoveClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        if (!main_view.text.isNullOrEmpty()){
+
+            calcullator_model.RemoveClickEvent(main_view,secondary_view)
+
+        }
 
     }
 

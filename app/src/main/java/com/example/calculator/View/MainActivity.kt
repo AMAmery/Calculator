@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var DOT : Button
     lateinit var CLEAN : Button
     lateinit var REMOVE : Button
-
+    lateinit var CONVERTER : Button
         // Numbers
 
     lateinit var BTN_9 : Button
@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             DOT = findViewById<Button>(R.id.DOT)
             CLEAN = findViewById<Button>(R.id.CLEAN)
             REMOVE = findViewById<Button>(R.id.REMOVE)
+            CONVERTER = findViewById<Button>(R.id.CONVERTER)
 
             BTN_9 = findViewById<Button>(R.id.BTN_9)
             BTN_8 = findViewById<Button>(R.id.BTN_8)
@@ -100,6 +101,36 @@ class MainActivity : AppCompatActivity() {
 
             }  }
 
+     // Clean click event
+
+            CLEAN.setOnClickListener{
+
+                Calcualtor_Controller.CleanClickEvent(MainView,SecondaryView)
+
+            }
+
+     // Dot click event
+
+            DOT.setOnClickListener {
+
+                Calcualtor_Controller.DotClickEvent(MainView,SecondaryView)
+
+            }
+
+     // Converter click event
+
+            CONVERTER.setOnClickListener {
+
+                Calcualtor_Controller.NumberConverterClickEvent(MainView,SecondaryView)
+
+            }
+     // Remove click event
+
+            REMOVE.setOnClickListener {
+
+                Calcualtor_Controller.RemoveClickEvent(MainView,SecondaryView)
+
+            }
     }
 
 }

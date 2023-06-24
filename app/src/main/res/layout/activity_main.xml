@@ -47,7 +47,7 @@
                android:layout_height="wrap_content"
                android:layout_weight="0"
 
-               android:text="0"
+               android:text=""
                android:textSize="35dp"
                android:textColor="@color/Orange"
                android:gravity="right"
