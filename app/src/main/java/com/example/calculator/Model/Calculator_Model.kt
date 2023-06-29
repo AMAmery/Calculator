@@ -486,8 +486,9 @@ class Calculator_Model : ICalculator_Model {
 
     override fun EqualClickEvent(main_view: TextView, secondary_view: TextView) {
 
-        main_view.text = null
-        secondary_view.text = result.toString()
+        val final_value = Calculate(operation_selected,result).toString()
+        main_view.text = final_value
+        secondary_view.text = final_value
         number = ""
 
     }
