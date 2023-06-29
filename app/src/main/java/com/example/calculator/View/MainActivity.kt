@@ -131,6 +131,13 @@ class MainActivity : AppCompatActivity() {
                 Calcualtor_Controller.RemoveClickEvent(MainView,SecondaryView)
 
             }
+     // Equal click event
+
+            EQUAL.setOnClickListener {
+
+                Calcualtor_Controller.EqualClickEvent(MainView,SecondaryView)
+
+            }
     }
 
 }

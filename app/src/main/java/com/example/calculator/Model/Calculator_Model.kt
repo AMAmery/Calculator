@@ -1,6 +1,5 @@
 package com.example.calculator.Model
 
-import android.service.media.MediaBrowserService
 import android.util.Log
 import android.util.TypedValue
 import android.widget.Button
@@ -221,41 +220,18 @@ class Calculator_Model : ICalculator_Model {
 
     override fun NumberConverterClickEvent(main_view: TextView, secondary_view: TextView) {
 
-        var converted_number = ""
-        var ALLOW_TO_APPEND = true
-        var main_view_txt = main_view.text.toString()
+        var mainView_str = main_view.text.toString()
+        val previousNumber = number
+        val newNumber = if (previousNumber[0]=='-') previousNumber.substring(1) else "-$previousNumber"
+        number = newNumber
 
+        // replace
 
-        // Checking last character of main_view
+            mainView_str = mainView_str.replace(Regex("$previousNumber$"),newNumber)
+            Log.d("__new_number","$previousNumber , $newNumber")
 
-            for (character in SYMBOLS){
-
-                if ( main_view_txt.get(main_view_txt.length-1)==character ){
-
-                    ALLOW_TO_APPEND = false
-                    break
-
-                }
-
-            }
-
-        // Checking first character of number is - or not
-
-            if ( number.get(0) == '-' ){
-
-                converted_number = number.substringAfter('-')
-
-            }else{
-
-                converted_number = "-$number"
-
-            }
-
-
-        main_view_txt = main_view_txt.replace(Regex(number),converted_number)
-
-        number = converted_number
-        main_view.text = main_view_txt
+        main_view.text = mainView_str
+        secondary_view.text = Calculate(operation_selected,result).toString()
 
     }
 
@@ -264,8 +240,8 @@ class Calculator_Model : ICalculator_Model {
         var mainview_str = main_view.text.toString()
         var previous_number = ""
 
-        fun CalulateNewValue (Number : Double ,
-                              operation: Char) {
+        fun CalculateNewValue (Number : Double,
+                               operation: Char) {
 
             val calulate_response = when (operation) {
 
@@ -430,7 +406,7 @@ class Calculator_Model : ICalculator_Model {
                 }
 
 
-                CalulateNewValue(number.toDouble(),operation_parameter)
+                CalculateNewValue(number.toDouble(),operation_parameter)
                 val temporary = number
                 val result2 = Calculate(operation_selected,result)
                 number = temporary
@@ -508,5 +484,13 @@ class Calculator_Model : ICalculator_Model {
 
         }
 
+    override fun EqualClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        main_view.text = null
+        secondary_view.text = result.toString()
+        number = ""
+
     }
+
+}
 

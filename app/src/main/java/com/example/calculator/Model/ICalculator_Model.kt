@@ -21,4 +21,6 @@ interface ICalculator_Model {
 
     fun RemoveClickEvent (main_view : TextView , secondary_view : TextView)
 
+    fun EqualClickEvent (main_view : TextView , secondary_view : TextView)
+
 }

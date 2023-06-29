@@ -56,4 +56,12 @@ class Calculator_Controller : ICalculator_Controller {
 
     }
 
+    override fun EqualClickEvent(main_view: TextView, secondary_view: TextView) {
+
+        if(main_view.text.isNotEmpty()){
+            calcullator_model.EqualClickEvent(main_view,secondary_view)
+        }
+
+    }
+
 }
