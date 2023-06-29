@@ -1,5 +1,6 @@
 package com.example.calculator.Model
 
+import android.service.media.MediaBrowserService
 import android.util.Log
 import android.util.TypedValue
 import android.widget.Button
@@ -13,6 +14,56 @@ class Calculator_Model : ICalculator_Model {
     private val SYMBOLS = arrayOf('+','-','×','÷','.')
     private var operation_selected = '+'
     // Methods
+
+        fun FindeNumberInEnd (main_view_str:String):String{
+
+            val numberRP = Regex("[0-9]+$")
+            val negative_numberRP = Regex("[-][0-9]+$")
+            val decimalRP = Regex("[0-9]+[.][0-9]+$")
+            val negative_decimalRP = Regex("[-][0-9]+[.][0-9]+$")
+            val regex = Regex("$numberRP|$negative_numberRP|$decimalRP|$negative_decimalRP")
+
+            val result = regex.find(main_view_str)?.value
+
+            return "$result"
+
+        }
+
+        fun RemoveZeroFromBeginning (inputp:String):String{
+
+
+            val numberRP = Regex("[0-9]+$")
+            val negative_numberRP = Regex("[-][0-9]+$")
+            val decimalRP = Regex("[0-9]+[.][0-9]+$")
+            val negative_decimalRP = Regex("[-][0-9]+[.][0-9]+$")
+            val regex = Regex("$numberRP|$negative_numberRP|$decimalRP|$negative_decimalRP")
+
+            val ResultOfSearch = regex.find(inputp)?.value
+            var end = false
+            var StringWithOutExtra0 = ""
+            for (char in "$ResultOfSearch"){
+
+                if (char !in arrayOf('-','0')){
+
+                    val start_index = ResultOfSearch.toString().indexOf(char)
+                    val end_index = ResultOfSearch.toString().length-1
+                    end = true
+                    for (index in start_index..end_index){
+
+                        StringWithOutExtra0 += ResultOfSearch.toString().get(index)
+
+                    }
+
+                }
+
+                if (end)break
+
+            }
+
+            if (inputp.toDouble()<0) StringWithOutExtra0 = "-$StringWithOutExtra0"
+            return  StringWithOutExtra0
+
+        }
 
         fun MakeSmallFontSizeView (main_view : TextView){
 
@@ -78,6 +129,11 @@ class Calculator_Model : ICalculator_Model {
 
 
         main_view.append(number_txt)
+        if(number.toDouble() != 0.0){
+            val old_number = number
+            number = RemoveZeroFromBeginning(number)
+            main_view.text = main_view.text.toString().replace(old_number,number)
+        }
         secondary_view.text = final_value.toString()
 
     }
@@ -222,7 +278,6 @@ class Calculator_Model : ICalculator_Model {
                 '-' -> {
 
                     result -= Number
-                    result -= previous_number.toDouble()
 
                 }
 
@@ -254,7 +309,6 @@ class Calculator_Model : ICalculator_Model {
             // To specify last character is symbol or not
 
             var ISSYMBOL = false
-
             for (symbol in SYMBOLS){
 
                 if ( mainview_str.last() == symbol ){
@@ -268,11 +322,13 @@ class Calculator_Model : ICalculator_Model {
 
             if (ISSYMBOL){
 
-                // remove symbol
-                // save new number
-                // calculate new values
-
                 mainview_str = mainview_str.dropLast(1)
+
+                if ( mainview_str.last() in SYMBOLS){
+
+                    mainview_str = mainview_str.dropLast(1)
+
+                }
 
                 // get new number from string
 
@@ -280,13 +336,12 @@ class Calculator_Model : ICalculator_Model {
 
                     number = "${number_pattern.find(mainview_str)?.value}"
 
+
                 // get new operation
 
                     var ResultToFindeOperation = ""
                     val operation_pattern = Regex("[[+]|[-]|[×]|[÷]][0-9]+$")
                     var response_search = operation_pattern.containsMatchIn(mainview_str)
-                    val result_index = ResultToFindeOperation.length
-                    val mainview_index = mainview_str.length
 
 
                     if (response_search){
@@ -296,13 +351,23 @@ class Calculator_Model : ICalculator_Model {
 
                     }else{
 
-                        ResultToFindeOperation= "$mainview_str"
+                        ResultToFindeOperation= mainview_str
                         operation_selected = '+'
 
                     }
+                    val result_index = ResultToFindeOperation.length
+                    val mainview_index = mainview_str.length
 
+                    var previous_char = ' '
+                    if (mainview_str.length == number.length){
 
-                        val previous_char = mainview_str.get( (mainview_index-result_index)-1 )
+                        previous_char = mainview_str.get(0)
+
+                    }else{
+
+                        previous_char = mainview_str.get( (mainview_index-result_index)-1 )
+
+                    }
 
                     var ISSYMBO = false
                     for (symbol in arrayOf('-','+','×','÷')){
@@ -323,13 +388,23 @@ class Calculator_Model : ICalculator_Model {
                         true ->{
 
                             number = ResultToFindeOperation
-
+                            operation_selected=previous_char
 
                         }
 
                         else ->{
 
+                            if (mainview_str.length==number.length){
+
+                                operation_selected = '+'
+
+                            }else{
+
                             operation_selected = ResultToFindeOperation.get(0)
+                            ResultToFindeOperation =ResultToFindeOperation.substring(1)
+                            number = ResultToFindeOperation
+
+                            }
 
                         }
 
@@ -353,17 +428,68 @@ class Calculator_Model : ICalculator_Model {
                     else -> '×'
 
                 }
-                CalulateNewValue(number.toDouble(),operation_parameter)
 
+
+                CalulateNewValue(number.toDouble(),operation_parameter)
+                val temporary = number
                 val result2 = Calculate(operation_selected,result)
+                number = temporary
                 main_view.text = mainview_str
                 secondary_view.text = result2.toString()
 
             }else{
 
                 // calculate new values
-                Log.d("locallllllll","$number , $mainview_str")
-                if (number.isEmpty()) number = mainview_str
+                if (number.isEmpty()) {
+
+                    number = FindeNumberInEnd(mainview_str)
+                    val start_index = number.length
+                    val end_index = mainview_str.length
+
+                    var previous_char = ' '
+                    if (mainview_str.length == number.length){
+
+                        previous_char = mainview_str.get(0)
+
+                    }else{
+
+                        previous_char = mainview_str.get( (end_index-start_index)-1 )
+
+                    }
+
+                    var ISSYMBOL = false
+                    for (symbol in arrayOf('-','+','×','÷')){
+
+                        if (previous_char == symbol){
+
+                            ISSYMBOL = true
+                            break
+
+                        }
+
+                    }
+
+                    when (ISSYMBOL){
+
+                        false->{
+
+                            if (mainview_str.length==number.length){
+
+                                operation_selected = '+'
+
+                            }else{
+
+                                operation_selected = number.get(0)
+                                number = number.substring(1)
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
                 if (mainview_str.length == number.length){
 
                     result = number.toDouble()
@@ -372,10 +498,10 @@ class Calculator_Model : ICalculator_Model {
                     operation_selected = '+'
 
                 }
-                    CalulateNewValue(number.toDouble(),operation_selected)
+
 
                 main_view.text = mainview_str
-                secondary_view.text = result.toString()
+                secondary_view.text =  Calculate(operation_selected,result).toString()
 
             }
 
