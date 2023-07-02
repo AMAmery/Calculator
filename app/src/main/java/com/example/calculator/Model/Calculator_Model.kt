@@ -1,18 +1,132 @@
 package com.example.calculator.Model
 
-import android.util.Log
-import android.util.TypedValue
+import android.animation.Animator
+import android.content.Context
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 
-class Calculator_Model : ICalculator_Model {
+class Calculator_Model(context: Context) : ICalculator_Model {
 
     private var number = ""
-    private var result = 0.0
-    private var DECREACEFONTSIZE = 5F
+    private var result = BigDecimal("0.0")
     private val SYMBOLS = arrayOf('+','-','×','÷','.')
     private var operation_selected = '+'
+    private val decimalFormat = DecimalFormat("#.########", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+    private val context = context
+    private val decimalDigits_WARNINGMESSAGE = "the maximum decimal digits of number is 8"
+    private val Digits_WARNINGMESSAGE = "the maximum digits of number is 16"
+    private var OrginalViewScaleX : Float? = null
+    private var OrginalViewScaleY : Float? = null
+
     // Methods
+
+        fun SmallScaleAnimation (view:Button) : ObjectAnimator{
+
+            OrginalViewScaleX = view.scaleX
+            OrginalViewScaleY = view.scaleY
+
+            val animation = ObjectAnimator.ofPropertyValuesHolder(view,
+
+                PropertyValuesHolder.ofFloat("scaleX", OrginalViewScaleX!! , OrginalViewScaleX!!-0.5F),
+                PropertyValuesHolder.ofFloat("scaleY", OrginalViewScaleY!! , OrginalViewScaleY!!-0.5F)
+
+            )
+
+            animation.duration = 70
+
+            return animation
+        }
+
+        fun ResizeScaleAnimation (view:Button) : ObjectAnimator{
+
+            val animation = ObjectAnimator.ofPropertyValuesHolder(view,
+
+                PropertyValuesHolder.ofFloat("scaleX", OrginalViewScaleX!!-0.5F , OrginalViewScaleX!!) ,
+                PropertyValuesHolder.ofFloat("scaleY", OrginalViewScaleY!!-0.5F , OrginalViewScaleY!!)
+
+                )
+
+            animation.duration = 70
+
+         return animation
+
+        }
+
+        fun RunAnimation (button:Button){
+
+            val scale_animation = SmallScaleAnimation(button)
+            scale_animation.start()
+            scale_animation.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+
+                    ResizeScaleAnimation(button).start()
+
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator) {
+                }
+            })
+
+
+        }
+
+        fun Warning(message: String) = Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+
+        fun AmountOfDecimalDigits():Int{
+
+            var count = 0
+            var DotIndex = number.indexOf('.')
+            val PreviousNumber = number
+            if (DotIndex==-1){
+
+                number+=".0"
+                DotIndex = number.indexOf('.')
+            }
+            var index = DotIndex
+            while(index<number.length-1){
+                count++
+                index++
+            }
+            number = PreviousNumber
+            return count
+
+        }
+
+        fun AmountOfDigits():Int{
+
+            val previous_number = number
+            if (number.isEmpty()) number = "0"
+            val dotIndex = number.indexOf('.')
+
+            if (dotIndex<0){
+                number+=".0"
+            }
+
+            var count = 0
+            var index = 0
+
+            while( number[index]!='.' ){
+                index++
+                count++
+            }
+
+            number = previous_number
+
+            return count
+        }
 
         fun FindeNumberInEnd (main_view_str:String):String{
 
@@ -29,7 +143,6 @@ class Calculator_Model : ICalculator_Model {
         }
 
         fun RemoveZeroFromBeginning (inputp:String):String{
-
 
             val numberRP = Regex("[0-9]+$")
             val negative_numberRP = Regex("[-][0-9]+$")
@@ -64,32 +177,12 @@ class Calculator_Model : ICalculator_Model {
 
         }
 
-        fun MakeSmallFontSizeView (main_view : TextView){
 
+        fun Calculate (operatoin : Char , resultp : BigDecimal):BigDecimal{
 
-            while (main_view.lineCount > 1){
+            var numberdb = BigDecimal(number)
 
-                var fontsize_mainview = main_view.textSize
-
-                if (fontsize_mainview > 35F){
-                    fontsize_mainview = 35F
-                }
-                fontsize_mainview -= DECREACEFONTSIZE
-                Log.d("fontsize",DECREACEFONTSIZE.toString())
-
-                main_view.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontsize_mainview)
-                DECREACEFONTSIZE +=5F
-
-            }
-
-        }
-
-        fun Calculate (operatoin : Char , resultp : Double):Double{
-
-            var numberdb = number.toDouble()
-
-
-            fun FILTER(number: Double): Double { return if (number == 0.0) 1.0 else number }
+            fun FILTER(number: BigDecimal): BigDecimal { return if (number == BigDecimal("0.0")) BigDecimal("1.0") else number }
 
           val result = when(operatoin){
 
@@ -110,7 +203,7 @@ class Calculator_Model : ICalculator_Model {
 
 
                else -> {
-                   return 0.0
+                   return BigDecimal("0.0")
                }
            }
 
@@ -119,25 +212,41 @@ class Calculator_Model : ICalculator_Model {
 
     override fun NumberClickEvent(button: Button, main_view: TextView, secondary_view: TextView) {
 
-        val number_txt = button.text
+        RunAnimation(button)
 
+        val number_txt = button.text
+        var digits = AmountOfDigits()
+        var decimal_digits = AmountOfDecimalDigits()
+        if (digits < 16 && decimal_digits < 8){
+        main_view.append(number_txt)
         number += number_txt
-        MakeSmallFontSizeView(main_view)
+        }
+        digits = AmountOfDigits()
+        decimal_digits = AmountOfDecimalDigits()
+        if (digits == 16){
+            Warning(Digits_WARNINGMESSAGE)
+        }
+        if (decimal_digits == 8){
+            Warning(decimalDigits_WARNINGMESSAGE)
+        }
+
+
         val final_value = Calculate(operation_selected,result)
 
 
 
-        main_view.append(number_txt)
         if(number.toDouble() != 0.0){
             val old_number = number
             number = RemoveZeroFromBeginning(number)
             main_view.text = main_view.text.toString().replace(old_number,number)
         }
-        secondary_view.text = final_value.toString()
+        secondary_view.text = decimalFormat.format(final_value)
 
     }
 
     override fun OperatinosButtonCLickEvent(main_view: TextView, secondary_view: TextView, main_button: Button) {
+
+        RunAnimation(main_button)
 
         val button_txt = main_button.text
 
@@ -161,25 +270,27 @@ class Calculator_Model : ICalculator_Model {
             number = ""
             operation_selected = button_txt[0]
             main_view.append(button_txt)
-            result = secondary_view.text.toString().toDouble()
+            result = BigDecimal(secondary_view.text.toString())
 
         }
 
     }
 
-    override fun CleanClickEvent(main_view: TextView, secondary_view: TextView) {
+    override fun CleanClickEvent(main_view: TextView, secondary_view: TextView,clean_button:Button) {
 
+        RunAnimation(clean_button)
         main_view.text = ""
         secondary_view.text = ""
         operation_selected = '+'
 
         number = ""
-        result = 0.0
+        result = BigDecimal("0.0")
 
     }
 
-    override fun DotClickEvent(main_view: TextView, secondary_view: TextView) {
+    override fun DotClickEvent(main_view: TextView, secondary_view: TextView , dot_button:Button) {
 
+        RunAnimation(dot_button)
         var ALLOW_TO_APPEND = true
 
         // Checking last character of main view
@@ -218,8 +329,9 @@ class Calculator_Model : ICalculator_Model {
 
     }
 
-    override fun NumberConverterClickEvent(main_view: TextView, secondary_view: TextView) {
+    override fun NumberConverterClickEvent(main_view: TextView, secondary_view: TextView,numberConverter:Button) {
 
+        RunAnimation(numberConverter)
         var mainView_str = main_view.text.toString()
         val previousNumber = number
         val newNumber = if (previousNumber[0]=='-') previousNumber.substring(1) else "-$previousNumber"
@@ -228,15 +340,15 @@ class Calculator_Model : ICalculator_Model {
         // replace
 
             mainView_str = mainView_str.replace(Regex("$previousNumber$"),newNumber)
-            Log.d("__new_number","$previousNumber , $newNumber")
 
         main_view.text = mainView_str
-        secondary_view.text = Calculate(operation_selected,result).toString()
+        secondary_view.text = decimalFormat.format(Calculate(operation_selected,result).toString())
 
     }
 
-    override fun RemoveClickEvent(main_view: TextView, secondary_view: TextView) {
+    override fun RemoveClickEvent(main_view: TextView, secondary_view: TextView,remove_button:Button) {
 
+        RunAnimation(remove_button)
         var mainview_str = main_view.text.toString()
         var previous_number = ""
 
@@ -247,25 +359,25 @@ class Calculator_Model : ICalculator_Model {
 
                 '+' -> {
 
-                    result += Number
+                    result += BigDecimal("$Number")
 
                 }
 
                 '-' -> {
 
-                    result -= Number
+                    result -= BigDecimal("$Number")
 
                 }
 
                 '×' -> {
 
-                    result *= Number
+                    result *= BigDecimal("$Number")
 
                 }
 
                 '÷' -> {
 
-                    result /= Number
+                    result /= BigDecimal("$Number")
 
                 }
 
@@ -276,8 +388,10 @@ class Calculator_Model : ICalculator_Model {
         }
 
             // Remove last character
-
-                mainview_str = mainview_str.dropLast(1)
+                if (mainview_str.last()!in SYMBOLS) {
+                    mainview_str = mainview_str.dropLast(1)
+                }
+                main_view.text = mainview_str
                 if (mainview_str.isEmpty()) mainview_str += "0"
                 previous_number = number
                 if ( number.isNotEmpty() ) number = number.dropLast(1)
@@ -299,10 +413,11 @@ class Calculator_Model : ICalculator_Model {
             if (ISSYMBOL){
 
                 mainview_str = mainview_str.dropLast(1)
-
+                main_view.text = mainview_str
                 if ( mainview_str.last() in SYMBOLS){
 
                     mainview_str = mainview_str.dropLast(1)
+                    main_view.text = mainview_str
 
                 }
 
@@ -371,7 +486,7 @@ class Calculator_Model : ICalculator_Model {
                         else ->{
 
                             if (mainview_str.length==number.length){
-
+                                result = BigDecimal("0.0")
                                 operation_selected = '+'
 
                             }else{
@@ -388,9 +503,7 @@ class Calculator_Model : ICalculator_Model {
 
                 if (mainview_str.length == number.length){
 
-                    result = number.toDouble()
-                    number = "0"
-                    previous_number = "0"
+                    result = BigDecimal("0.0")
                     operation_selected = '+'
 
                 }
@@ -405,7 +518,11 @@ class Calculator_Model : ICalculator_Model {
 
                 }
 
-
+                if (mainview_str.length==number.length){
+                    CalculateNewValue(number.toDouble(),'+')
+                }else{
+                    CalculateNewValue(number.toDouble(),operation_parameter)
+                }
                 CalculateNewValue(number.toDouble(),operation_parameter)
                 val temporary = number
                 val result2 = Calculate(operation_selected,result)
@@ -424,7 +541,7 @@ class Calculator_Model : ICalculator_Model {
 
                     var previous_char = ' '
                     if (mainview_str.length == number.length){
-
+                        result = BigDecimal("0.0")
                         previous_char = mainview_str.get(0)
 
                     }else{
@@ -451,6 +568,7 @@ class Calculator_Model : ICalculator_Model {
 
                             if (mainview_str.length==number.length){
 
+                                result = BigDecimal("0.0")
                                 operation_selected = '+'
 
                             }else{
@@ -468,28 +586,34 @@ class Calculator_Model : ICalculator_Model {
                 }
                 if (mainview_str.length == number.length){
 
-                    result = number.toDouble()
-                    number = "0"
-                    previous_number = "0"
+                    result = BigDecimal("0.0")
                     operation_selected = '+'
 
                 }
 
 
                 main_view.text = mainview_str
-                secondary_view.text =  Calculate(operation_selected,result).toString()
+                secondary_view.text = decimalFormat.format(Calculate(operation_selected,result)).toString()
 
             }
 
 
         }
 
-    override fun EqualClickEvent(main_view: TextView, secondary_view: TextView) {
+    override fun EqualClickEvent(main_view: TextView, secondary_view: TextView , equal_button:Button) {
 
-        val final_value = Calculate(operation_selected,result).toString()
-        main_view.text = final_value
+        var mainview_str = main_view.text.toString()
+        RunAnimation(equal_button)
+        if (mainview_str.last() in SYMBOLS){
+
+            mainview_str = mainview_str.dropLast(1)
+            number = "0"
+
+        }
+
+        val final_value = decimalFormat.format(Calculate(operation_selected,result)).toString()
+        main_view.text =  final_value
         secondary_view.text = final_value
-        number = ""
 
     }
 

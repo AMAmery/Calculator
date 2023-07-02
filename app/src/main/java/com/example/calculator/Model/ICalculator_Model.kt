@@ -13,14 +13,14 @@ interface ICalculator_Model {
                                     secondary_view : TextView,
                                     main_button : Button)
 
-    fun CleanClickEvent (main_view: TextView , secondary_view : TextView)
+    fun CleanClickEvent (main_view: TextView , secondary_view : TextView , clean_button : Button)
 
-    fun DotClickEvent (main_view : TextView , secondary_view : TextView)
+    fun DotClickEvent (main_view : TextView , secondary_view : TextView , dot_button : Button)
 
-    fun NumberConverterClickEvent (main_view : TextView , secondary_view : TextView)
+    fun NumberConverterClickEvent (main_view : TextView , secondary_view : TextView,numberConverter_button:Button)
 
-    fun RemoveClickEvent (main_view : TextView , secondary_view : TextView)
+    fun RemoveClickEvent (main_view : TextView , secondary_view : TextView,remove_button:Button)
 
-    fun EqualClickEvent (main_view : TextView , secondary_view : TextView)
+    fun EqualClickEvent (main_view : TextView , secondary_view : TextView,equal_button:Button)
 
 }

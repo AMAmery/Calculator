@@ -50,9 +50,11 @@
                android:text=""
                android:textSize="35dp"
                android:textColor="@color/Orange"
+               android:autoSizeTextType="uniform"
+               android:autoSizeMinTextSize="10dp"
+               android:autoSizeMaxTextSize="35dp"
                android:gravity="right"
                android:maxLines="1"
-
                android:layout_marginTop="15dp"
 
                >

@@ -3,7 +3,6 @@ package com.example.calculator.View
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import com.example.calculator.Controller.Calculator_Controller
 import com.example.calculator.R
@@ -49,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportActionBar?.hide()
         // Assign value
 
             MainView = findViewById<TextView>(R.id.Main_View)
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
             NumbersList = listOf<Button>(BTN_9,BTN_8,BTN_7,BTN_6,BTN_5,BTN_4,BTN_3,BTN_2,BTN_1,BTN_0)
             OperationsButtonList = listOf<Button>(PLUS,MINUS,MULTIPLICATION,DIVISION)
-            Calcualtor_Controller = Calculator_Controller()
+            Calcualtor_Controller = Calculator_Controller(applicationContext)
 
     }
 
@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity() {
 
             NumbersList.forEach { button -> button.setOnClickListener{
 
+                button.isEnabled = false
                 Calcualtor_Controller.NumberClickEvent(button,MainView,SecondaryView)
+                button.postDelayed({ button.isEnabled=true },150)
 
             }}
 
@@ -97,7 +99,9 @@ class MainActivity : AppCompatActivity() {
 
             OperationsButtonList.forEach{ button -> button.setOnClickListener {
 
+                button.isEnabled = false
                 Calcualtor_Controller.OperatinosButtonCLickEvent(MainView,SecondaryView,button)
+                button.postDelayed({ button.isEnabled=true },150)
 
             }  }
 
@@ -105,7 +109,9 @@ class MainActivity : AppCompatActivity() {
 
             CLEAN.setOnClickListener{
 
-                Calcualtor_Controller.CleanClickEvent(MainView,SecondaryView)
+                CLEAN.isEnabled = false
+                Calcualtor_Controller.CleanClickEvent(MainView,SecondaryView,CLEAN)
+                CLEAN.postDelayed({ CLEAN.isEnabled=true },150)
 
             }
 
@@ -113,7 +119,9 @@ class MainActivity : AppCompatActivity() {
 
             DOT.setOnClickListener {
 
-                Calcualtor_Controller.DotClickEvent(MainView,SecondaryView)
+                DOT.isEnabled  = false
+                Calcualtor_Controller.DotClickEvent(MainView,SecondaryView,DOT)
+                DOT.postDelayed({ DOT.isEnabled=true },150)
 
             }
 
@@ -121,21 +129,27 @@ class MainActivity : AppCompatActivity() {
 
             CONVERTER.setOnClickListener {
 
-                Calcualtor_Controller.NumberConverterClickEvent(MainView,SecondaryView)
+                CONVERTER.isEnabled = false
+                Calcualtor_Controller.NumberConverterClickEvent(MainView,SecondaryView,CONVERTER)
+                CONVERTER.postDelayed({ CONVERTER.isEnabled=true },150)
 
             }
      // Remove click event
 
             REMOVE.setOnClickListener {
 
-                Calcualtor_Controller.RemoveClickEvent(MainView,SecondaryView)
+                REMOVE.isEnabled = false
+                Calcualtor_Controller.RemoveClickEvent(MainView,SecondaryView,REMOVE)
+                REMOVE.postDelayed({ REMOVE.isEnabled=true },150)
 
             }
      // Equal click event
 
             EQUAL.setOnClickListener {
 
-                Calcualtor_Controller.EqualClickEvent(MainView,SecondaryView)
+                EQUAL.isEnabled = false
+                Calcualtor_Controller.EqualClickEvent(MainView,SecondaryView,EQUAL)
+                EQUAL.postDelayed({ EQUAL.isEnabled=true },150)
 
             }
     }
