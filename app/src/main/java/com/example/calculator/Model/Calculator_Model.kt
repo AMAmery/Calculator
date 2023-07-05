@@ -22,6 +22,7 @@ class Calculator_Model(context: Context) : ICalculator_Model {
     private val context = context
     private val decimalDigits_WARNINGMESSAGE = "the maximum decimal digits of number is 8"
     private val Digits_WARNINGMESSAGE = "the maximum digits of number is 16"
+    private val DiviedByZeroUnavailable = "divide by zero is not available"
     private var OrginalViewScaleX : Float? = null
     private var OrginalViewScaleY : Float? = null
 
@@ -172,6 +173,9 @@ class Calculator_Model(context: Context) : ICalculator_Model {
 
             }
 
+            // if number is like this : .5
+                if(StringWithOutExtra0[0].equals('.'))StringWithOutExtra0="0$StringWithOutExtra0"
+
             if (inputp.toDouble()<0) StringWithOutExtra0 = "-$StringWithOutExtra0"
             return  StringWithOutExtra0
 
@@ -198,7 +202,14 @@ class Calculator_Model(context: Context) : ICalculator_Model {
                 }
                 '÷' -> {
                     numberdb = FILTER(numberdb)
-                    resultp / numberdb
+
+                    if (numberdb.equals(BigDecimal("0"))){
+                        Warning(DiviedByZeroUnavailable)
+                        numberdb = BigDecimal("1")
+                    }
+
+                        resultp.divide(numberdb,10,BigDecimal.ROUND_HALF_UP)
+
                 }
 
 
@@ -333,24 +344,30 @@ class Calculator_Model(context: Context) : ICalculator_Model {
 
         RunAnimation(numberConverter)
         var mainView_str = main_view.text.toString()
-        val previousNumber = number
-        val newNumber = if (previousNumber[0]=='-') previousNumber.substring(1) else "-$previousNumber"
-        number = newNumber
+        var previousNumber = ""
+        var newNumber = ""
+        if (mainView_str.last() !in "+-×÷") {
+            previousNumber = number
+            if (number.last()=='.')number+="0"
+            newNumber =
+                if (previousNumber[0] == '-') previousNumber.substring(1) else "-$previousNumber"
+            number = newNumber
 
-        // replace
 
-            mainView_str = mainView_str.replace(Regex("$previousNumber$"),newNumber)
+            // replace
 
-        main_view.text = mainView_str
-        secondary_view.text = decimalFormat.format(Calculate(operation_selected,result).toString())
+            mainView_str = mainView_str.replace(Regex("$previousNumber$"), newNumber)
 
+            main_view.text = mainView_str
+            secondary_view.text =
+                decimalFormat.format(Calculate(operation_selected, result)).toString()
+        }
     }
 
     override fun RemoveClickEvent(main_view: TextView, secondary_view: TextView,remove_button:Button) {
 
         RunAnimation(remove_button)
         var mainview_str = main_view.text.toString()
-        var previous_number = ""
 
         fun CalculateNewValue (Number : Double,
                                operation: Char) {
@@ -388,18 +405,17 @@ class Calculator_Model(context: Context) : ICalculator_Model {
         }
 
             // Remove last character
-                if (mainview_str.last()!in SYMBOLS) {
+                if (mainview_str.last()!in "+-×÷") {
                     mainview_str = mainview_str.dropLast(1)
                 }
                 main_view.text = mainview_str
                 if (mainview_str.isEmpty()) mainview_str += "0"
-                previous_number = number
                 if ( number.isNotEmpty() ) number = number.dropLast(1)
 
             // To specify last character is symbol or not
 
             var ISSYMBOL = false
-            for (symbol in SYMBOLS){
+            for (symbol in "+-×÷"){
 
                 if ( mainview_str.last() == symbol ){
 
@@ -412,12 +428,16 @@ class Calculator_Model(context: Context) : ICalculator_Model {
 
             if (ISSYMBOL){
 
-                mainview_str = mainview_str.dropLast(1)
-                main_view.text = mainview_str
+                if (mainview_str.length==number.length && number[0]=='-'){
+                    mainview_str = mainview_str.dropLast(1)
+                    number = number.dropLast(1)
+                }else {
+                    mainview_str = mainview_str.dropLast(1)
+                }
+                if (mainview_str.isEmpty())mainview_str+="0"
                 if ( mainview_str.last() in SYMBOLS){
 
                     mainview_str = mainview_str.dropLast(1)
-                    main_view.text = mainview_str
 
                 }
 
@@ -431,7 +451,7 @@ class Calculator_Model(context: Context) : ICalculator_Model {
                 // get new operation
 
                     var ResultToFindeOperation = ""
-                    val operation_pattern = Regex("[[+]|[-]|[×]|[÷]][0-9]+$")
+                    val operation_pattern = Regex("[[+]|[-]|[×]|[÷]][0-9]+$|[[+]|[-]|[×]|[÷]][0-9]+[.][0-9]+$")
                     var response_search = operation_pattern.containsMatchIn(mainview_str)
 
 
@@ -460,7 +480,7 @@ class Calculator_Model(context: Context) : ICalculator_Model {
 
                     }
 
-                    var ISSYMBO = false
+                    var ISSYMBOL = false
                     for (symbol in arrayOf('-','+','×','÷')){
 
                         if (previous_char == symbol){
@@ -473,7 +493,7 @@ class Calculator_Model(context: Context) : ICalculator_Model {
                     }
 
 
-                    when (ISSYMBO){
+                    when (ISSYMBOL){
 
 
                         true ->{
@@ -519,16 +539,14 @@ class Calculator_Model(context: Context) : ICalculator_Model {
                 }
 
                 if (mainview_str.length==number.length){
-                    CalculateNewValue(number.toDouble(),'+')
+                    operation_selected = '+'
                 }else{
                     CalculateNewValue(number.toDouble(),operation_parameter)
                 }
-                CalculateNewValue(number.toDouble(),operation_parameter)
                 val temporary = number
-                val result2 = Calculate(operation_selected,result)
                 number = temporary
                 main_view.text = mainview_str
-                secondary_view.text = result2.toString()
+                secondary_view.text = decimalFormat.format(Calculate(operation_selected,result)).toString()
 
             }else{
 
@@ -604,11 +622,9 @@ class Calculator_Model(context: Context) : ICalculator_Model {
 
         var mainview_str = main_view.text.toString()
         RunAnimation(equal_button)
-        if (mainview_str.last() in SYMBOLS){
-
+        if (mainview_str.last() in "+-×÷"){
             mainview_str = mainview_str.dropLast(1)
             number = "0"
-
         }
 
         val final_value = decimalFormat.format(Calculate(operation_selected,result)).toString()
